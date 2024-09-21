@@ -1,5 +1,5 @@
-import argparse
 import math
+import sys
 
 
 def calculate_y(x, a, b, c):
@@ -35,43 +35,21 @@ def parse_config(file_path):
     return params
 
 
-def create_parser():
-    parser = argparse.ArgumentParser()
+def parse_command_line_args():
+    params = {}
 
-    parser.add_argument('--n0', type=float)
-    parser.add_argument('--h', type=float)
-    parser.add_argument('--nk', type=float)
-    parser.add_argument('--a', type=float)
-    parser.add_argument('--b', type=float)
-    parser.add_argument('--c', type=float)
+    for arg in sys.argv[1:]:
+        if '=' in arg:
+            key, value = arg.split('=')
+            params[key.lstrip('--')] = float(value)
 
-    return parser
-
-
-def is_not_bash_args():
-    updated = False
-
-    args_mapping = {
-        'n0': args.n0,
-        'h': args.h,
-        'nk': args.nk,
-        'a': args.a,
-        'b': args.b,
-        'c': args.c
-    }
-
-    for key, value in args_mapping.items():
-        if value is not None:
-            params[key] = value
-            updated = True
-
-    return not updated
+    return params
 
 
 if __name__ == "__main__":
-    params = {}
-    parser = create_parser()
-    args = parser.parse_args()
-    if is_not_bash_args():
+    params = parse_command_line_args()
+
+    if not params:
         params = parse_config('config.txt')
+
     calc(params)
