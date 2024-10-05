@@ -14,7 +14,7 @@ def calc(params):
     b = params['b']
     c = params['c']
 
-    with open('results.txt', 'w') as f:
+    with open('../results.txt', 'w') as f:
         x = n0
         while x <= nk:
             y = calculate_y(x, a, b, c)
@@ -50,6 +50,6 @@ if __name__ == "__main__":
     params = parse_command_line_args()
 
     if not params:
-        params = parse_config('config.txt')
+        params = parse_config('../config.txt')
 
     calc(params)
