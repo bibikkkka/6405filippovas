@@ -50,6 +50,6 @@ if __name__ == "__main__":
     params = parse_command_line_args()
 
     if not params:
-        params = parse_config('../config.txt')
+        params = parse_config('config.txt')
 
     calc(params)
