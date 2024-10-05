@@ -18,18 +18,18 @@ class DataAnalysis:
 
     @staticmethod
     def _median(values: np.ndarray, window=3) -> np.ndarray:
-        buffer = []
-        filtered = np.zeros_like(values.shape)
+        buffer = [0.0 for _ in range (window)]
+        filtered = np.zeros_like(values)
         for index, value in enumerate(values):
-            if len(buffer) == window:
-                buffer.pop(0)
+            # if len(buffer) == window:
+            buffer.pop(0)
             buffer.append(value)
             filtered[index] = sorted(buffer)[window // 2]
         return filtered
 
     def median(self, window=3) -> tuple[np.ndarray, ...]:
-        if not self.data:
-            return (np.zeros((1,1), dtype=float), )
+        if self.data is None:
+            return (np.zeros((1, 1), dtype=float),)
         _, cols = self.data.shape
         data = self.data.values
         return tuple(DataAnalysis._median(data[:, col], window) for col in range(cols))
@@ -37,7 +37,7 @@ class DataAnalysis:
     @staticmethod
     def _moving_average(values: np.ndarray, window=3) -> np.ndarray:
         buffer = []
-        filtered = np.zeros_like(values.shape)
+        filtered = np.zeros_like(values)
         for index, value in enumerate(values):
             if len(buffer) == window:
                 buffer.pop(0)
@@ -46,7 +46,7 @@ class DataAnalysis:
         return filtered
 
     def moving_average(self, window=3) -> tuple[np.ndarray, ...]:
-        if self.data is not empty(self.data.shape):
+        if self.data is None:
             return (np.zeros((1,1), dtype=float), )
 
         _, cols = self.data.shape
@@ -58,11 +58,9 @@ class DataAnalysis:
             print("Нет доступных данных для построения графика.")
             return
 
-        # Вычисляем скользящее среднее
         moving_avg = self.moving_average(window=window)
         print("Moving averages:", moving_avg)
 
-        # Построение графика
         plt.figure(figsize=(12, 6))
 
         # Оригинальные данные
@@ -74,6 +72,31 @@ class DataAnalysis:
                 plt.plot(self.data.index[:avg.size], avg, label=f'Скользящее среднее (окно={window})', linestyle='--')
 
         plt.title('Оригинальные данные и скользящее среднее')
+        plt.xlabel('Дата')
+        plt.ylabel('Значение')
+        plt.legend()
+        plt.grid()
+        plt.show()
+
+
+    def plot_data_with_median(self, window=3):
+        if self.fetch_data() is None or self.data.empty:
+            print("Нет доступных данных для построения графика.")
+            return
+
+        median = self.median(window=window)
+
+        plt.figure(figsize=(12, 6))
+
+        # Оригинальные данные
+        plt.plot(self.data.index, self.data[self.data.columns[0]], label='Оригинальные данные', color='blue')
+
+        # Скользящее среднее для каждого столбца
+        for idx, avg in enumerate(median):
+            if avg.size > 0:  # Проверяем размерность
+                plt.plot(self.data.index[:avg.size], avg, label=f'Медиана (окно={window})', linestyle='--')
+
+        plt.title('Оригинальные данные и медиана')
         plt.xlabel('Дата')
         plt.ylabel('Значение')
         plt.legend()
@@ -93,7 +116,7 @@ class DataAnalysis:
     #     return filtered
 
     # def moving_average(self, window=3):
-    #     return self.data.rolling(window=window).mean()
+        # return self.data.rolling(window=window).mean()
 
     def calculate_difference(self):
         return self.data.diff()
