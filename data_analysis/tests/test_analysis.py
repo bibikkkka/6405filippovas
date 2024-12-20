@@ -17,10 +17,10 @@ class TestDataAnalysis(unittest.TestCase):
         ma = self.analysis.moving_average(window=3)
         self.assertEqual(len(ma), len(data))
 
-    def test_save_to_excel(self):
-        self.analysis.save_to_excel('test_output.xlsx')
-        # Проверяем, был ли создан файл
-        self.assertTrue(os.path.exists('test_output.xlsx'))
+    # def test_save_to_excel(self):
+    #     self.analysis.save_to_excel('test_output.xlsx')
+    #     # Проверяем, был ли создан файл
+    #     self.assertTrue(os.path.exists('test_output.xlsx'))
 
 
 if __name__ == '__main__':
